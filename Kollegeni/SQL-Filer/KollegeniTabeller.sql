@@ -14,6 +14,7 @@ CREATE TABLE Beboer (
 
 CREATE TABLE Admin (
     id INT PRIMARY KEY,
+    attribute NVARCHAR(255),
     FOREIGN KEY (id) REFERENCES Bruger(id)
 );
 
