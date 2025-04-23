@@ -1,9 +1,15 @@
 ﻿using System;
 namespace Kollegeni.Models
 {
-	public class EmptyClass
+	public class Bruger
 	{
-		public EmptyClass()
+		public String Brugernavn { get; set; }
+		public String kodeOrd { get; set; }
+		public String Mail { get; set; }
+		public String Sprog { get; set; }
+		public String Id { get; set; }
+		
+		public Bruger()
 		{
 		}
 	}

@@ -8,7 +8,7 @@ namespace Kollegeni.Models
 		public List<Bruger> Beboere { get; set; }
 		public Residens()
 		{
-			Beboere = new List<Bruger>;
+			Beboere = new List<Bruger>();
 		}
 	}
 }
