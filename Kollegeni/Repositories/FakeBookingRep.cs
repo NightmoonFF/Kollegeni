@@ -9,21 +9,21 @@ namespace Kollegeni.Repositories
         {
             new Booking
             {
-                BookingId = 1,
-                StartTidspunkt = DateTime.Now,
-                SlutTidspunkt = DateTime.Now.AddHours(4)
+                Id = 1,
+                Starttidspunkt = DateTime.Now,
+                Sluttidspunkt = DateTime.Now.AddHours(4)
             },
             new Booking
             {
-                BookingId = 2,
-                StartTidspunkt = DateTime.Now.AddDays(1),
-                SlutTidspunkt = DateTime.Now.AddDays(1).AddHours(2)
+                Id = 2,
+                Starttidspunkt = DateTime.Now.AddDays(1),
+                Sluttidspunkt = DateTime.Now.AddDays(1).AddHours(2)
             }
         };
 
         public void AddBooking(Booking booking)
         {
-            booking.BookingId = _bookings.Count + 1;
+            booking.Id = _bookings.Count + 1;
             _bookings.Add(booking);
         }
 

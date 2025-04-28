@@ -1,15 +1,12 @@
-﻿using System;
-namespace Kollegeni.Models
+﻿namespace Kollegeni.Models;
+public class Event
 {
-	public class Event
-	{
-		public DateTime StartTudspunkt { get; set; }
-		public DateTime SlutTidspunkt { get; set; }
-		public String Beskrivelse { get; set; }
-		public String Navn { get; set; }
-		public Event()
-		{
-		}
-	}
-}
+    public int Id { get; set; }
+    public DateTime Starttidspunkt { get; set; }
+    public DateTime Sluttidspunkt { get; set; }
+    public string Beskrivelse { get; set; }
+    public string Navn { get; set; }
 
+    public int ResidensId { get; set; }
+    public virtual Residens Residens { get; set; }
+}

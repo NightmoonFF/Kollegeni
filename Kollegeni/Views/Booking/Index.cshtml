@@ -1,0 +1,43 @@
+﻿@model IEnumerable<Kollegeni.Models.Booking>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Bookings</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Fælleslokale</th>
+            <th>Residens</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var booking in Model)
+        {
+            <tr>
+                <td>@booking.Starttidspunkt</td>
+                <td>@booking.Sluttidspunkt</td>
+                <td>@booking.Fælleslokale?.Navn</td>
+                <td>@booking.Residens?.Adresse</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@booking.Id" class="btn btn-warning">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@booking.Id" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div>
+    <a asp-action="Create" class="btn btn-primary">Create New Booking</a>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial");
+}
+

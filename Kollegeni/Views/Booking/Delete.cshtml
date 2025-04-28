@@ -1,0 +1,45 @@
+﻿@model Kollegeni.Models.Booking
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Delete</h1>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Booking</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Starttidspunkt)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Starttidspunkt)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Sluttidspunkt)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Sluttidspunkt)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Fælleslokale)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Fælleslokale.Id)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Residens)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Residens.Id)
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-action="Index">Back to List</a>
+    </form>
+</div>

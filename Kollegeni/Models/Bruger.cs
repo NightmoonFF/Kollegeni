@@ -1,17 +1,23 @@
-﻿using System;
-namespace Kollegeni.Models
+﻿
+namespace Kollegeni.Models;
+public class Bruger
 {
-	public class Bruger
-	{
-		public String Brugernavn { get; set; }
-		public String kodeOrd { get; set; }
-		public String Mail { get; set; }
-		public String Sprog { get; set; }
-		public String Id { get; set; }
-		
-		public Bruger()
-		{
-		}
-	}
+    public int Id { get; set; }
+    public string Brugernavn { get; set; }
+    public string KodeOrd { get; set; }
+    public string Mail { get; set; }
+    public string Sprog { get; set; }
+    public string Avatar { get; set; }
+
+    public virtual ICollection<BrugerResidens> BrugerResidenser { get; set; }
 }
 
+public class Beboer : Bruger
+{
+    // Eventuelle specielle egenskaber for beboere
+}
+
+public class Admin : Bruger
+{
+    public string Attribute { get; set; }
+}

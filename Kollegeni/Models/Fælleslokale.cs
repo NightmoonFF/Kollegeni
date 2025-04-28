@@ -1,14 +1,9 @@
-﻿using System;
-namespace Kollegeni.Models
+﻿namespace Kollegeni.Models;
+public class Fælleslokale
 {
-	public class Fælleslokale
-	{
-		public String navn { get; set; }
-		public String Id { get; set; }
-		public String Beskrivelse { get; set; }
-		public Fælleslokale()
-		{
-		}
-	}
-}
+    public int Id { get; set; }
+    public string Navn { get; set; }
+    public string Beskrivelse { get; set; }
 
+    public virtual ICollection<Booking> Bookinger { get; set; }
+}

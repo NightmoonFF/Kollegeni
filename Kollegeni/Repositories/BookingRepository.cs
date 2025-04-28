@@ -1,7 +1,6 @@
-﻿using Kollegeni.Data;
+﻿using Kollegeni.Interface;
 using Kollegeni.Models;
-using Microsoft.EntityFrameworkCore;
-using Kollegeni.Interface;
+using Kollegeni.Data;
 
 namespace Kollegeni.Repositories
 {
@@ -15,26 +14,26 @@ namespace Kollegeni.Repositories
 
         public void AddBooking(Booking booking)
         {
-            _context.Bookings.Add(booking);
+            _context.Bookinger.Add(booking);
             _context.SaveChanges();
         }
         public void UpdateBooking(Booking booking)
         {
-            _context.Bookings.Update(booking);
+            _context.Bookinger.Update(booking);
             _context.SaveChanges();
         }
         public void DeleteBooking(Booking booking)
         {
-            _context.Bookings.Remove(booking);
+            _context.Bookinger.Remove(booking);
             _context.SaveChanges();
         }
         public Booking GetBookingById(int id)
         {
-            return _context.Bookings.Find(id);
+            return _context.Bookinger.Find(id);
         }
         public IEnumerable<Booking> GetAllBookings()
         {
-            return _context.Bookings.ToList();
+            return _context.Bookinger.ToList();
         }   
     }
 }

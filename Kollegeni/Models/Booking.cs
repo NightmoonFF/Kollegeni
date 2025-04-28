@@ -1,16 +1,23 @@
-﻿using System;
-namespace Kollegeni.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Kollegeni.Models;
+public class Booking
 {
-	public class Booking
-	{
-        public DateTime StartTidspunkt { get; set; }
-        public DateTime SlutTidspunkt { get; set; }
+    public int Id { get; set; }
+    [Required]
+    [Display(Name = "Starttidspunkt")]
+    [DataType(DataType.DateTime)]
+    public DateTime Starttidspunkt { get; set; }
 
-		public int BookingId { get; set; }
+    [Required]
+    [Display(Name = "Sluttidspunkt")]
+    [DataType(DataType.DateTime)]
+    public DateTime Sluttidspunkt { get; set; }
 
-        public Booking()
-		{
-		}
-	}
+    public int FælleslokaleId { get; set; }
+    public int ResidensId { get; set; }
+
+    public virtual Fælleslokale Fælleslokale { get; set; }
+    public virtual Residens Residens { get; set; }
+
 }
-
