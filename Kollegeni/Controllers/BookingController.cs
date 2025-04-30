@@ -61,8 +61,8 @@ public class BookingController : Controller
             return RedirectToAction("Index");
         }
 
-        ViewBag.FælleslokaleId = new SelectList(_db.Rooms, "Id", "Navn", booking.RoomId);
-        ViewBag.ResidensId = new SelectList(_db.Residencies, "Id", "Adresse", booking.TenantId);
+        ViewBag.RoomId = new SelectList(_db.Rooms, "Id", "Name", booking.RoomId);
+        ViewBag.ResidencyId = new SelectList(_db.Residencies, "Id", "Address", booking.TenantId);
         return View(booking);
     }
 
