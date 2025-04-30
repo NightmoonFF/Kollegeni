@@ -11,8 +11,8 @@
         <tr>
             <th>Start Time</th>
             <th>End Time</th>
-            <th>Fælleslokale</th>
-            <th>Residens</th>
+            <th>Room</th>
+            <th>Residency</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -23,7 +23,7 @@
                 <td>@booking.StartTime</td>
                 <td>@booking.EndTime</td>
                 <td>@booking.Room?.Name</td>
-                <td>@booking.Residency?.Adresse</td>
+                <td>@booking.Residency?.Address</td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@booking.Id" class="btn btn-warning">Edit</a>
                     <a asp-action="Delete" asp-route-id="@booking.Id" class="btn btn-danger">Delete</a>
