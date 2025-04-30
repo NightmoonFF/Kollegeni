@@ -14,26 +14,26 @@ namespace Kollegeni.Repositories
 
         public void AddBooking(Booking booking)
         {
-            _context.Bookinger.Add(booking);
+            _context.Bookings.Add(booking);
             _context.SaveChanges();
         }
         public void UpdateBooking(Booking booking)
         {
-            _context.Bookinger.Update(booking);
+            _context.Bookings.Update(booking);
             _context.SaveChanges();
         }
         public void DeleteBooking(Booking booking)
         {
-            _context.Bookinger.Remove(booking);
+            _context.Bookings.Remove(booking);
             _context.SaveChanges();
         }
         public Booking GetBookingById(int id)
         {
-            return _context.Bookinger.Find(id);
+            return _context.Bookings.Find(id);
         }
         public IEnumerable<Booking> GetAllBookings()
         {
-            return _context.Bookinger.ToList();
+            return _context.Bookings.ToList();
         }   
     }
 }

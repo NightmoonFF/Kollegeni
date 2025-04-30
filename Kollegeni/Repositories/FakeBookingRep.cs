@@ -10,14 +10,14 @@ namespace Kollegeni.Repositories
             new Booking
             {
                 Id = 1,
-                Starttidspunkt = DateTime.Now,
-                Sluttidspunkt = DateTime.Now.AddHours(4)
+                StartTime = DateTime.Now,
+                EndTime = DateTime.Now.AddHours(4)
             },
             new Booking
             {
                 Id = 2,
-                Starttidspunkt = DateTime.Now.AddDays(1),
-                Sluttidspunkt = DateTime.Now.AddDays(1).AddHours(2)
+                StartTime = DateTime.Now.AddDays(1),
+                EndTime = DateTime.Now.AddDays(1).AddHours(2)
             }
         };
 

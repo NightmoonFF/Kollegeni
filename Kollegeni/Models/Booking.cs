@@ -5,19 +5,19 @@ public class Booking
 {
     public int Id { get; set; }
     [Required]
-    [Display(Name = "Starttidspunkt")]
+    [Display(Name = "StartTime")]
     [DataType(DataType.DateTime)]
-    public DateTime Starttidspunkt { get; set; }
+    public DateTime StartTime { get; set; }
 
     [Required]
-    [Display(Name = "Sluttidspunkt")]
+    [Display(Name = "EndTime")]
     [DataType(DataType.DateTime)]
-    public DateTime Sluttidspunkt { get; set; }
+    public DateTime EndTime { get; set; }
 
-    public int FælleslokaleId { get; set; }
-    public int ResidensId { get; set; }
+    public int RoomId { get; set; }
+    public int TenantId { get; set; }
 
-    public virtual Fælleslokale Fælleslokale { get; set; }
-    public virtual Residens Residens { get; set; }
+    public virtual Room Room { get; set; }
+    public virtual Residency Residency { get; set; }
 
 }

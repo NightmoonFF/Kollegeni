@@ -2,11 +2,11 @@
 public class Event
 {
     public int Id { get; set; }
-    public DateTime Starttidspunkt { get; set; }
-    public DateTime Sluttidspunkt { get; set; }
-    public string Beskrivelse { get; set; }
-    public string Navn { get; set; }
+    public DateTime StartTime { get; set; }
+    public DateTime EndTime { get; set; }
+    public string Description { get; set; }
+    public string Name { get; set; }
 
-    public int ResidensId { get; set; }
-    public virtual Residens Residens { get; set; }
+    public int TenantId { get; set; }
+    public virtual Residency Residency { get; set; }
 }

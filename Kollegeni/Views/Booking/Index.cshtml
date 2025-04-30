@@ -20,10 +20,10 @@
         @foreach (var booking in Model)
         {
             <tr>
-                <td>@booking.Starttidspunkt</td>
-                <td>@booking.Sluttidspunkt</td>
-                <td>@booking.Fælleslokale?.Navn</td>
-                <td>@booking.Residens?.Adresse</td>
+                <td>@booking.StartTime</td>
+                <td>@booking.EndTime</td>
+                <td>@booking.Room?.Name</td>
+                <td>@booking.Residency?.Adresse</td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@booking.Id" class="btn btn-warning">Edit</a>
                     <a asp-action="Delete" asp-route-id="@booking.Id" class="btn btn-danger">Delete</a>

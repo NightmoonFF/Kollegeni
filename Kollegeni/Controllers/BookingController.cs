@@ -20,39 +20,39 @@ public class BookingController : Controller
     // GET: Booking
     public ActionResult Index()
     {
-        var bookinger = _db.Bookinger.Include(b => b.Fælleslokale).Include(b => b.Residens);
-        return View(bookinger.ToList());
+        var bookings = _db.Bookings.Include(b => b.Room).Include(b => b.Residency);
+        return View(bookings.ToList());
     }
 
     // GET: Booking/Create
     public ActionResult Create()
     {
-        ViewBag.FælleslokaleId = new SelectList(_db.Fælleslokaler, "Id", "Navn");
-        ViewBag.ResidensId = new SelectList(_db.Residenser, "Id", "Adresse");
+        ViewBag.RoomId = new SelectList(_db.Rooms, "Id", "Name");
+        ViewBag.ResidencyId = new SelectList(_db.Residencies, "Id", "Address");
         return View();
     }
 
     // POST: Booking/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public ActionResult Create([Bind("Starttidspunkt,Sluttidspunkt,FælleslokaleId,ResidensId")] Booking booking)
+    public ActionResult Create([Bind("StartTime,EndTime,RoomId,ResidencyId")] Booking booking)
     {
         if (ModelState.IsValid)
         {
-            _db.Bookinger.Add(booking);
+            _db.Bookings.Add(booking);
             _db.SaveChanges();
             return RedirectToAction("Index");
         }
 
-        ViewBag.FælleslokaleId = new SelectList(_db.Fælleslokaler, "Id", "Navn", booking.FælleslokaleId);
-        ViewBag.ResidensId = new SelectList(_db.Residenser, "Id", "Adresse", booking.ResidensId);
+        ViewBag.RoomId = new SelectList(_db.Rooms, "Id", "Name", booking.RoomId);
+        ViewBag.ResidencyId = new SelectList(_db.Residencies, "Id", "Address", booking.TenantId);
         return View(booking);
     }
 
     // POST: Booking/Edit/5
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public ActionResult Edit([Bind("Id,Starttidspunkt,Sluttidspunkt,FælleslokaleId,ResidensId")] Booking booking)
+    public ActionResult Edit([Bind("Id,StartTime,EndTime,RoomId,ResidencyId")] Booking booking)
     {
         if (ModelState.IsValid)
         {
@@ -61,8 +61,8 @@ public class BookingController : Controller
             return RedirectToAction("Index");
         }
 
-        ViewBag.FælleslokaleId = new SelectList(_db.Fælleslokaler, "Id", "Navn", booking.FælleslokaleId);
-        ViewBag.ResidensId = new SelectList(_db.Residenser, "Id", "Adresse", booking.ResidensId);
+        ViewBag.FælleslokaleId = new SelectList(_db.Rooms, "Id", "Navn", booking.RoomId);
+        ViewBag.ResidensId = new SelectList(_db.Residencies, "Id", "Adresse", booking.TenantId);
         return View(booking);
     }
 
@@ -71,7 +71,7 @@ public class BookingController : Controller
     {
         if (id == null) return BadRequest(); // Replaces HttpStatusCodeResult(HttpStatusCode.BadRequest)
 
-        Booking booking = _db.Bookinger.Find(id);
+        Booking booking = _db.Bookings.Find(id);
         if (booking == null) return NotFound(); // Replaces HttpNotFound()
 
         return View(booking);
@@ -83,8 +83,8 @@ public class BookingController : Controller
     [ValidateAntiForgeryToken]
     public ActionResult DeleteConfirmed(int id)
     {
-        Booking booking = _db.Bookinger.Find(id);
-        _db.Bookinger.Remove(booking);
+        Booking booking = _db.Bookings.Find(id);
+        _db.Bookings.Remove(booking);
         _db.SaveChanges();
         return RedirectToAction("Index");
     }
