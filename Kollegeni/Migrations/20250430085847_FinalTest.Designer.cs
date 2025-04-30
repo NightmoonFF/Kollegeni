@@ -4,6 +4,7 @@ using Kollegeni.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Kollegeni.Migrations
 {
     [DbContext(typeof(BookingDbContext))]
-    partial class BookingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250430085847_FinalTest")]
+    partial class FinalTest
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,7 +65,7 @@ namespace Kollegeni.Migrations
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ResidencyId")
+                    b.Property<int?>("ResidencyId")
                         .HasColumnType("int");
 
                     b.Property<int>("RoomId")
@@ -71,7 +74,10 @@ namespace Kollegeni.Migrations
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("TenantId")
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TenantId1")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -81,6 +87,8 @@ namespace Kollegeni.Migrations
                     b.HasIndex("RoomId");
 
                     b.HasIndex("TenantId");
+
+                    b.HasIndex("TenantId1");
 
                     b.ToTable("Bookings");
                 });
@@ -238,11 +246,9 @@ namespace Kollegeni.Migrations
 
             modelBuilder.Entity("Kollegeni.Models.Booking", b =>
                 {
-                    b.HasOne("Kollegeni.Models.Residency", "Residency")
+                    b.HasOne("Kollegeni.Models.Residency", null)
                         .WithMany("Bookings")
-                        .HasForeignKey("ResidencyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ResidencyId");
 
                     b.HasOne("Kollegeni.Models.Room", "Room")
                         .WithMany("Bookings")
@@ -250,13 +256,19 @@ namespace Kollegeni.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Kollegeni.Models.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Kollegeni.Models.Tenant", null)
                         .WithMany("Bookings")
-                        .HasForeignKey("TenantId");
-
-                    b.Navigation("Residency");
+                        .HasForeignKey("TenantId1");
 
                     b.Navigation("Room");
+
+                    b.Navigation("Tenant");
                 });
 
             modelBuilder.Entity("Kollegeni.Models.Event", b =>

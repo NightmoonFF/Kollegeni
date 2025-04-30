@@ -11,13 +11,3 @@ public class User
 
     public virtual ICollection<UserResidence> UserResidences { get; set; }
 }
-
-public class Tenant : User
-{
-    // Eventuelle specielle egenskaber for beboere
-}
-
-public class Admin : User
-{
-    public string Attribute { get; set; }
-}
