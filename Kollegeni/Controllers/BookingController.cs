@@ -37,6 +37,9 @@ public class BookingController : Controller
     [ValidateAntiForgeryToken]
     public ActionResult Create([Bind("StartTime,EndTime,RoomId,ResidencyId")] Booking booking)
     {
+        ModelState.Remove("Room");
+        ModelState.Remove("Residency");
+
         if (ModelState.IsValid)
         {
             _db.Bookings.Add(booking);
@@ -54,6 +57,8 @@ public class BookingController : Controller
     [ValidateAntiForgeryToken]
     public ActionResult Edit([Bind("Id,StartTime,EndTime,RoomId,ResidencyId")] Booking booking)
     {
+        ModelState.Remove("Room");
+        ModelState.Remove("Residency");
         if (ModelState.IsValid)
         {
             _db.Entry(booking).State = EntityState.Modified;
