@@ -4,6 +4,7 @@ using Kollegeni.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Kollegeni.Migrations
 {
     [DbContext(typeof(BookingDbContext))]
-    partial class BookingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250430081632_Admin")]
+    partial class Admin
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,35 +24,6 @@ namespace Kollegeni.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("Kollegeni.Models.Admin", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("attribute")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Admins");
-                });
 
             modelBuilder.Entity("Kollegeni.Models.Booking", b =>
                 {
@@ -71,7 +45,7 @@ namespace Kollegeni.Migrations
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("TenantId")
+                    b.Property<int>("TenantId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -117,7 +91,7 @@ namespace Kollegeni.Migrations
 
                     b.HasIndex("ResidencyId");
 
-                    b.ToTable("Event");
+                    b.ToTable("Events");
                 });
 
             modelBuilder.Entity("Kollegeni.Models.Residency", b =>
@@ -132,12 +106,7 @@ namespace Kollegeni.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("AdminId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("AdminId");
 
                     b.ToTable("Residencies");
                 });
@@ -171,10 +140,6 @@ namespace Kollegeni.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -200,6 +165,11 @@ namespace Kollegeni.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -219,6 +189,10 @@ namespace Kollegeni.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+
+                    b.HasDiscriminator().HasValue("User");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Kollegeni.Models.UserResidence", b =>
@@ -234,6 +208,17 @@ namespace Kollegeni.Migrations
                     b.HasIndex("ResidenceId");
 
                     b.ToTable("UserResidencies");
+                });
+
+            modelBuilder.Entity("Kollegeni.Models.Admin", b =>
+                {
+                    b.HasBaseType("Kollegeni.Models.User");
+
+                    b.Property<string>("Attribute")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasDiscriminator().HasValue("Admin");
                 });
 
             modelBuilder.Entity("Kollegeni.Models.Booking", b =>
@@ -252,7 +237,9 @@ namespace Kollegeni.Migrations
 
                     b.HasOne("Kollegeni.Models.Tenant", null)
                         .WithMany("Bookings")
-                        .HasForeignKey("TenantId");
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Residency");
 
@@ -268,13 +255,6 @@ namespace Kollegeni.Migrations
                         .IsRequired();
 
                     b.Navigation("Residency");
-                });
-
-            modelBuilder.Entity("Kollegeni.Models.Residency", b =>
-                {
-                    b.HasOne("Kollegeni.Models.Admin", null)
-                        .WithMany("ManagedResidencies")
-                        .HasForeignKey("AdminId");
                 });
 
             modelBuilder.Entity("Kollegeni.Models.UserResidence", b =>
@@ -294,11 +274,6 @@ namespace Kollegeni.Migrations
                     b.Navigation("Residency");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Kollegeni.Models.Admin", b =>
-                {
-                    b.Navigation("ManagedResidencies");
                 });
 
             modelBuilder.Entity("Kollegeni.Models.Residency", b =>

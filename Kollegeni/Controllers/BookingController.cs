@@ -45,7 +45,7 @@ public class BookingController : Controller
         }
 
         ViewBag.RoomId = new SelectList(_db.Rooms, "Id", "Name", booking.RoomId);
-        ViewBag.ResidencyId = new SelectList(_db.Residencies, "Id", "Address", booking.TenantId);
+        ViewBag.ResidencyId = new SelectList(_db.Residencies, "Id", "Address", booking.ResidencyId);
         return View(booking);
     }
 
@@ -62,7 +62,7 @@ public class BookingController : Controller
         }
 
         ViewBag.RoomId = new SelectList(_db.Rooms, "Id", "Name", booking.RoomId);
-        ViewBag.ResidencyId = new SelectList(_db.Residencies, "Id", "Address", booking.TenantId);
+        ViewBag.ResidencyId = new SelectList(_db.Residencies, "Id", "Address", booking.ResidencyId);
         return View(booking);
     }
 

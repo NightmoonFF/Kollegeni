@@ -21,7 +21,7 @@ public class BookingDbContext : DbContext
     public DbSet<UserResidence> UserResidencies { get; set; }
     public DbSet<Room> Rooms { get; set; }
     public DbSet<Booking> Bookings { get; set; }
-    public DbSet<Event> Events { get; set; }
+    public DbSet<Event> Event { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -47,6 +47,20 @@ public class BookingDbContext : DbContext
             .HasOne(br => br.Residency)
             .WithMany(r => r.UserResidencies)
             .HasForeignKey(br => br.ResidenceId);
+        
+        modelBuilder.Entity<Booking>()
+            .HasOne(b => b.Residency)
+            .WithMany(r => r.Bookings)
+            .HasForeignKey(b => b.ResidencyId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Booking>()
+            .HasOne(b => b.Room)
+            .WithMany(r => r.Bookings)
+            .HasForeignKey(b => b.RoomId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+
 
         base.OnModelCreating(modelBuilder);
     }
