@@ -8,7 +8,11 @@ public class BookingDbContext : DbContext
     {
     }
 
-    public BookingDbContext(DbContextOptions<BookingDbContext> options) : base(options) { }
+    public BookingDbContext(DbContextOptions<BookingDbContext> options) : base(options) { 
+        
+        Database.EnsureCreated();
+
+    } 
 
     public DbSet<User> Users { get; set; }
     public DbSet<Tenant> Tenants { get; set; }
@@ -18,6 +22,14 @@ public class BookingDbContext : DbContext
     public DbSet<Room> Rooms { get; set; }
     public DbSet<Booking> Bookings { get; set; }
     public DbSet<Event> Events { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        //optionsBuilder.UseSqlServer("Server=localhost;Database=Kollegeni;Trusted_Connection=True;TrustServerCertificate=True;");
+        
+        //Apple Friendly
+        optionsBuilder.UseSqlServer("Data Source=localhost;Initial Catalog=Kollegeni;Trusted_Connection=True;TrustServerCertificate=True;");
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
