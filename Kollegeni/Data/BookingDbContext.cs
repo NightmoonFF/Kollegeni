@@ -28,7 +28,7 @@ public class BookingDbContext : DbContext
         //optionsBuilder.UseSqlServer("Server=localhost;Database=Kollegeni;Trusted_Connection=True;TrustServerCertificate=True;");
         
         //Apple Friendly
-        optionsBuilder.UseSqlServer("Data Source=localhost;Initial Catalog=Kollegeni;Trusted_Connection=True;TrustServerCertificate=True;");
+        optionsBuilder.UseSqlServer("Data Source=localhost\\SQLEXPRESS;Initial Catalog=Kollegeni;Trusted_Connection=True;TrustServerCertificate=True;");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
