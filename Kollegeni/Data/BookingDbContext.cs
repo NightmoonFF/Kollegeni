@@ -1,8 +1,9 @@
 ﻿using Kollegeni.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Kollegeni.Data;
-public class BookingDbContext : DbContext
+public class BookingDbContext : IdentityDbContext
 {
     public BookingDbContext()
     {
