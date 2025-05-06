@@ -30,9 +30,9 @@ namespace Kollegeni.Controllers
                 var user = _context.Users.FirstOrDefault(u => u.Username == model.Username && u.Password == model.Password);
                 if (user != null)
                 {
-                    // You can set up authentication cookies or tokens here
-                    FormsAuthentication.SetAuthCookie(user.Username, false);
-                    return RedirectToAction("Index", "Home"); // Redirect to Home page after login
+                    //set up authentication cookies or tokens here?
+                    //FormsAuthentication.SetAuthCookie(user.Username, false);
+                    return RedirectToAction("Index", "Home"); //Redirect to Home page after login?
                 }
                 else
                 {
@@ -45,7 +45,7 @@ namespace Kollegeni.Controllers
         // GET: Account/Logout
         public ActionResult Logout()
         {
-            FormsAuthentication.SignOut();
+            //FormsAuthentication.SignOut();
             return RedirectToAction("Login", "Account");
         }
     }
