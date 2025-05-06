@@ -16,6 +16,12 @@ namespace Kollegeni.Controllers
 
         public IActionResult Index()
         {
+            var user = HttpContext.Session.GetString("Username");
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
             return View();
         }
 
@@ -39,22 +45,22 @@ namespace Kollegeni.Controllers
             return Json(events);
         }
 
-        public JsonResult GetEvents()
-        {
-            var events = _context.Events
-                .Select(e => new
-                {
-                    id = e.Id,
-                    start = e.StartTime.ToString("yyyy-MM-ddTHH:mm:ss"),
-                    end = e.EndTime.ToString("yyyy-MM-ddTHH:mm:ss"),
-                    description = e.Description,
-                    name = e.Name,
-                    tenantId = e.TenantId,
-                    residency = e.Residency
-                })
-                .ToList();
+        //public JsonResult GetEvents()
+        //{
+        //    var events = _context.Events
+        //        .Select(e => new
+        //        {
+        //            id = e.Id,
+        //            start = e.StartTime.ToString("yyyy-MM-ddTHH:mm:ss"),
+        //            end = e.EndTime.ToString("yyyy-MM-ddTHH:mm:ss"),
+        //            description = e.Description,
+        //            name = e.Name,
+        //            tenantId = e.TenantId,
+        //            residency = e.Residency
+        //        })
+        //        .ToList();
 
-            return Json(events);
-        }
+        //    return Json(events);
+        //}
     }
 }

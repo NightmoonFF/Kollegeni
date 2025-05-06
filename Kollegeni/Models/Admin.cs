@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
 namespace Kollegeni.Models;
-public class Admin
+public class Admin //TODO: SKal nedarve fra User
 {
     public int Id { get; set; } // Primær nøgle
     public string Username { get; set; }

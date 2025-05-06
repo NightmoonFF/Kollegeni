@@ -10,7 +10,7 @@
     <div class="alert alert-success">@ViewBag.Message</div>
 }
 
-<form asp-action="Index" method="post">
+<form asp-action="Index" method="post" enctype="multipart/form-data">
     <input type="hidden" asp-for="Id" />
 
     <div class="mb-3">
@@ -32,8 +32,8 @@
     </div>
 
     <div class="mb-3">
-        <label asp-for="Avatar" class="form-label">Avatar URL</label>
-        <input asp-for="Avatar" class="form-control" />
+        <label asp-for="Avatar" class="form-label">Avatar</label>
+        <input type="file" id="avatarFile" name="Avatar" class="form-control" accept="image/*" />
         <span asp-validation-for="Avatar" class="text-danger"></span>
     </div>
 
@@ -41,7 +41,16 @@
     {
         <div class="mb-3">
             <label class="form-label">Current Avatar</label><br />
-            <img src="@Model.Avatar" alt="Avatar" style="max-height: 150px;" />
+
+            @* If the Avatar is a URL or a base64 string, display the image accordingly *@
+            @if (Model.Avatar.StartsWith("http"))
+            {
+                <img src="@Model.Avatar" alt="Avatar" style="max-height: 150px;" />
+            }
+            else
+            {
+                <img src="data:image/png;base64,@Model.Avatar" alt="Avatar" style="max-height: 150px;" />
+            }
         </div>
     }
 

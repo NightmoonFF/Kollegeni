@@ -3,20 +3,15 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Kollegeni.Data;
-public class BookingDbContext : IdentityDbContext
+public class BookingDbContext : DbContext
 {
-    public BookingDbContext()
-    {
-    }
 
     public BookingDbContext(DbContextOptions<BookingDbContext> options) : base(options) { 
         
         Database.EnsureCreated();
-
     } 
 
     public DbSet<User> Users { get; set; }
-    public DbSet<Tenant> Tenants { get; set; }
     public DbSet<Admin> Admins { get; set; }
     public DbSet<Residency> Residencies { get; set; }
     public DbSet<UserResidence> UserResidencies { get; set; }
@@ -61,9 +56,29 @@ public class BookingDbContext : IdentityDbContext
             .WithMany(r => r.Bookings)
             .HasForeignKey(b => b.RoomId)
             .OnDelete(DeleteBehavior.Cascade);
-        
+
+
+        // Seed Residencies data
+        modelBuilder.Entity<Residency>().HasData(
+            new Residency { Id = 1, Address = "71, 2" },
+            new Residency { Id = 2, Address = "74, 5" }
+        );
+
+        // Seed Users data
+        modelBuilder.Entity<User>().HasData(
+            new User { Id = 1, Username = "John", Password = "123", Name = "John", Email = "john@example.com", Language = "English", Avatar = "http://example.com/avatar1.jpg" },
+            new User { Id = 2, Username = "JaneSmith", Password = "123", Name = "Jane", Email = "jane@example.com", Language = "English", Avatar = "http://example.com/avatar2.jpg" },
+            new User { Id = 3, Username = "Karen", Password = "123", Name = "Karen", Email = "karen@example.com", Language = "English", Avatar = "http://example.com/avatar2.jpg" }
+        );
+
+        // Seed UserResidencies data (Associating users with residencies)
+        modelBuilder.Entity<UserResidence>().HasData(
+            new UserResidence { UserId = 1, ResidenceId = 1 },
+            new UserResidence { UserId = 2, ResidenceId = 1 },
+            new UserResidence { UserId = 3, ResidenceId = 2 });
 
 
         base.OnModelCreating(modelBuilder);
     }
+
 }

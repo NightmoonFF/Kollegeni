@@ -8,9 +8,9 @@ namespace Kollegeni.Controllers
     {
         private readonly BookingDbContext _context;
 
-        public AccountController()
+        public AccountController(BookingDbContext db)
         {
-            _context = new BookingDbContext();
+            _context = db;
         }
 
         // GET: Account/Login
@@ -32,7 +32,9 @@ namespace Kollegeni.Controllers
                 {
                     //set up authentication cookies or tokens here?
                     //FormsAuthentication.SetAuthCookie(user.Username, false);
-                    return RedirectToAction("Index", "Home"); //Redirect to Home page after login?
+                    HttpContext.Session.SetString("Username", user.Username);
+                    
+                    return RedirectToAction("Index", "Calendar"); //Redirect to Home page after login?
                 }
                 else
                 {

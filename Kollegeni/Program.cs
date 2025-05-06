@@ -9,10 +9,18 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<BookingDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(10);
+});
+
 // Add Razor Pages
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
+
+
+app.UseSession();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
