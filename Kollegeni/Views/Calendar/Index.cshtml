@@ -25,10 +25,10 @@
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
             dateClick: function(info) {
-                // Set the selected date in the hidden input
+                //Set the selected date in the hidden input
                 document.getElementById('selectedDate').value = info.dateStr;
 
-                // Open the modal
+                //Open the modal
                 $('#bookingModal').modal('show');
             }
         });
