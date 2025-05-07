@@ -60,7 +60,6 @@ public class BookingDbContext : DbContext
 
 
         // Seed Residencies data
-
         modelBuilder.Entity<Residency>().HasData(
             new Residency { Id = 1, Address = "71, 2" },
             new Residency { Id = 2, Address = "74, 5" }
@@ -81,7 +80,8 @@ public class BookingDbContext : DbContext
 
         //Seed Room Data
         modelBuilder.Entity<Room>().HasData(
-            new Room { Id = 1, Name = "Bar Room", Description = "The bar room i guess"}
+            new Room { Id = 1, Name = "Bar Room", Description = "The bar room i guess"},
+            new Room { Id = 2, Name = "Pool Room", Description = "Room for playing Pool obviously"}
             );
 
         //Seed Booking Data
