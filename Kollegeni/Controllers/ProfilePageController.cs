@@ -13,8 +13,6 @@ namespace Kollegeni.Controllers
             _context = context;
         }
         
-        //TODO: DOES NOT WORK
-
         [HttpGet]
         public IActionResult Index()
         {
