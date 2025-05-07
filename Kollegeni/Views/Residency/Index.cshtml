@@ -1,0 +1,21 @@
+﻿@model IEnumerable<Kollegeni.Models.Residency>
+
+@{
+    ViewData["Title"] = "Residency List";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@foreach (var residency in Model)
+{
+    <div class="residency">
+        <h3>@residency.Address</h3>
+
+        <ul>
+            @foreach (var userResidence in residency.UserResidencies)
+            {
+                <li>@userResidence.User.Username (@userResidence.User.Email)</li>
+            }
+        </ul>
+    </div>
+}
