@@ -1,5 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Calendar";
+    var rooms = ViewData["Rooms"] as List<Kollegeni.Models.Room>;
 }
 
 <h2>@ViewData["Title"]</h2>
@@ -8,23 +9,23 @@
 
 @section Scripts {
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-        var calendarEl = document.getElementById('calendar');
+            document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
 
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            events: '/Calendar/GetEvents',
-            dateClick: function(info) {
-                //Set the selected date in the hidden input
-                document.getElementById('selectedDate').value = info.dateStr;
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                events: '/Calendar/GetEvents',
+                dateClick: function(info) {
+                    //Set the selected date in the hidden input
+                    document.getElementById('selectedDate').value = info.dateStr;
 
-                //Open the modal
-                $('#bookingModal').modal('show');
-            }
+                    //Open the modal
+                    $('#bookingModal').modal('show');
+                }
+            });
+
+            calendar.render();
         });
-
-        calendar.render();
-    });
     </script>
 
     <div class="modal fade" id="bookingModal" tabindex="-1" role="dialog" aria-labelledby="bookingModalLabel" aria-hidden="true">
@@ -39,25 +40,31 @@
                 <div class="modal-body">
                     <form id="bookingForm">
                         <div class="form-group">
-                            <!-- skal være kun tidspunkt, da man jo klikker på datoen-->
-                            <label for="startTime">Start Time</label>
-                            <input type="datetime-local" class="form-control" id="startTime" required>
+                            <label for="timeSlot">Select Time Slot</label>
+                            <select class="form-control" id="timeSlot" required>
+                                <option value="09:00">09:00 - 11:00</option>
+                                <option value="11:00">11:00 - 13:00</option>
+                                <option value="13:00">13:00 - 15:00</option>
+                                <option value="15:00">15:00 - 17:00</option>
+                                <option value="17:00">17:00 - 19:00</option>
+                                <option value="19:00">19:00 - 21:00</option>
+                                <option value="21:00">21:00 - 23:00</option>
+                                <option value="23:00">23:00 - 01:00</option>
+                                <option value="01:00">01:00 - 03:00</option>
+                            </select>
                         </div>
-                        <div class="form-group">
-                            <label for="endTime">End Time</label>
-                            <input type="datetime-local" class="form-control" id="endTime" required>
-                        </div>
+
                         <div class="form-group">
                             <label for="room">Room</label>
                             <select class="form-control" id="room" required>
+                                <option value="">...</option>
+                                @foreach (var room in rooms)
+                                {
+                                    <option value="@room.Id">@room.Name</option>
+                                }
                             </select>
                         </div>
-                        <!-- skal auto hentes fra sin session/identity? -->
-                        <div class="form-group">
-                            <label for="residency">Residency</label>
-                            <select class="form-control" id="residency" required>
-                            </select>
-                        </div>
+
                         <input type="hidden" id="selectedDate">
                         <button type="submit" class="btn btn-primary">Save Booking</button>
                     </form>
@@ -65,5 +72,8 @@
             </div>
         </div>
     </div>
+
+
+
 
 }

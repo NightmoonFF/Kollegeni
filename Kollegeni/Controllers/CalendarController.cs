@@ -22,6 +22,9 @@ namespace Kollegeni.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
+            var rooms = _context.Rooms.ToList();
+            ViewData["Rooms"] = rooms;
+
             return View();
         }
 
