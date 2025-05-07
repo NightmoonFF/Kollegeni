@@ -13,14 +13,63 @@
 
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
-            events: '/Calendar/GetEvents',
+            eventSources: [
+                {
+                    url: '/Calendar/GetBookings', // Første datakilde
+                    method: 'GET',
+                    failure: function() {
+                        console.error('Failed to fetch bookings');
+                    }
+                },
+                {
+                    url: '/Calendar/GetEvents', // Anden datakilde
+                    method: 'GET',
+                    failure: function() {
+                        console.error('Failed to fetch events');
+                    }
+                },
+                {
+                    url: '/Calendar/GetRooms', // Tredje datakilde
+                    method: 'GET',
+                    failure: function() {
+                    console.error('Failed to fetch rooms');
+                    }
+                }
+            ],
+
             dateClick: function(info) {
                 //Set the selected date in the hidden input
                 document.getElementById('selectedDate').value = info.dateStr;
 
                 //Open the modal
                 $('#bookingModal').modal('show');
+            },
+            eventClick: function(info) {
+                // Prevent default behavior (e.g., navigating to a URL)
+                info.jsEvent.preventDefault();
+
+                // Log event details for debugging
+                console.log('Event clicked:', info.event);
+
+                // Populate modal with event details
+                document.getElementById('bookingModalLabel').innerText = 'Booking Details';
+                document.getElementById('startTime').value = info.event.start.toISOString().slice(0, 16); // Format datetime
+                document.getElementById('endTime').value = info.event.end ? info.event.end.toISOString().slice(0, 16) : '';
+                document.getElementById('room').value = info.event.extendedProps.roomName || '';
+                document.getElementById('residency').value = info.event.extendedProps.residency || '';
+
+                // Disable form inputs to make it read-only
+                document.getElementById('startTime').disabled = true;
+                document.getElementById('endTime').disabled = true;
+                document.getElementById('room').disabled = true;
+                document.getElementById('residency').disabled = true;
+
+                // Show the modal
+                $('#bookingModal').modal('show');
+                
             }
+
+
         });
 
         calendar.render();

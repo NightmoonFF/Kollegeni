@@ -37,7 +37,11 @@ namespace Kollegeni.Controllers
                     roomId = b.RoomId,
                     residencyid = b.ResidencyId,
                     room = b.Room,
-                    residency = b.Residency
+                    residency = b.Residency,
+                    extendedProps = new
+                    {
+                        roomName = b.Room.Name
+                    }
 
                 })
                 .ToList();
@@ -57,6 +61,19 @@ namespace Kollegeni.Controllers
                     name = e.Name,
                     tenantId = e.TenantId,
                     residency = e.Residency
+                })
+                .ToList();
+
+            return Json(events);
+        }
+            public JsonResult GetRooms()
+        {
+            var events = _context.Rooms
+                .Select(e => new
+                {
+                    id = e.Id,
+                    name = e.Name,
+                    description = e.Description
                 })
                 .ToList();
 
