@@ -34,7 +34,7 @@ namespace Kollegeni.Controllers
                 .Select(b => new
                 {
                     id = b.Id,
-                    
+
                     start = b.StartTime.ToString("yyyy-MM-ddTHH:mm:ss"),
                     end = b.EndTime.ToString("yyyy-MM-ddTHH:mm:ss"),
                     roomId = b.RoomId,
@@ -69,8 +69,16 @@ namespace Kollegeni.Controllers
         // POST: Booking/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind("StartTime,EndTime,RoomId,ResidencyId")] Booking booking, string selectedDate, string timeSlot)
+        public ActionResult Create([Bind("RoomId")] Booking booking, string selectedDate, string timeSlot)
         {
+            // Retrieve the username from the session
+            var username = HttpContext.Session.GetString("Username");
+
+            if (string.IsNullOrEmpty(username))
+            {
+                return Json(new { success = false, message = "User not logged in." });
+            }
+
             // Validate data
             if (string.IsNullOrEmpty(selectedDate) || string.IsNullOrEmpty(timeSlot))
             {
@@ -86,24 +94,34 @@ namespace Kollegeni.Controllers
                 booking.StartTime = startTime;
                 booking.EndTime = endTime;
 
-                var room = _context.Rooms.FirstOrDefault(r => r.Id == booking.RoomId);
-                var residency = _context.Residencies.FirstOrDefault(r => r.Id == booking.ResidencyId);
+                var user = _context.Users.FirstOrDefault(u => u.Username == username);
 
-                if (room == null || residency == null)
+                if (user == null)
                 {
-                    return Json(new { success = false, message = "Room or Residency not found." });
+                    return Json(new { success = false, message = "User not found." });
                 }
 
+                booking.ResidencyId = user.UserResidences.FirstOrDefault().ResidenceId;
+
+                // Validate Room
+                var room = _context.Rooms.FirstOrDefault(r => r.Id == booking.RoomId);
+
+                if (room == null)
+                {
+                    return Json(new { success = false, message = "Room not found." });
+                }
+
+                // Add the booking to the database
                 _context.Bookings.Add(booking);
                 _context.SaveChanges();
+
                 return Json(new { success = true, message = "Booking created successfully!" });
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
-            
                 return Json(new { success = false, message = "Error: " + ex.Message });
             }
-
         }
+
     }
 }
