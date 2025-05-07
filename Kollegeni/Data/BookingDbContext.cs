@@ -6,10 +6,11 @@ namespace Kollegeni.Data;
 public class BookingDbContext : DbContext
 {
 
-    public BookingDbContext(DbContextOptions<BookingDbContext> options) : base(options) { 
-        
+    public BookingDbContext(DbContextOptions<BookingDbContext> options) : base(options)
+    {
+
         Database.EnsureCreated();
-    } 
+    }
 
     public DbSet<User> Users { get; set; }
     public DbSet<Admin> Admins { get; set; }
@@ -44,7 +45,7 @@ public class BookingDbContext : DbContext
             .HasOne(br => br.Residency)
             .WithMany(r => r.UserResidencies)
             .HasForeignKey(br => br.ResidenceId);
-        
+
         modelBuilder.Entity<Booking>()
             .HasOne(b => b.Residency)
             .WithMany(r => r.Bookings)
@@ -59,6 +60,7 @@ public class BookingDbContext : DbContext
 
 
         // Seed Residencies data
+
         modelBuilder.Entity<Residency>().HasData(
             new Residency { Id = 1, Address = "71, 2" },
             new Residency { Id = 2, Address = "74, 5" }
@@ -77,7 +79,38 @@ public class BookingDbContext : DbContext
             new UserResidence { UserId = 2, ResidenceId = 1 },
             new UserResidence { UserId = 3, ResidenceId = 2 });
 
+        //Seed Room Data
+        modelBuilder.Entity<Room>().HasData(
+            new Room { Id = 1, Name = "Bar Room", Description = "The bar room i guess"}
+            );
 
+        //Seed Booking Data
+        modelBuilder.Entity<Booking>().HasData(
+            new Booking
+            {
+                Id = 1,
+                StartTime = new DateTime(2025, 05, 10, 14, 0, 0),
+                EndTime = new DateTime(2025, 05, 10, 16, 0, 0),
+                RoomId = 1,
+                ResidencyId = 1
+            },
+            new Booking
+            {
+                Id = 2,
+                StartTime = new DateTime(2025, 05, 11, 9, 0, 0),
+                EndTime = new DateTime(2025, 05, 11, 11, 0, 0),
+                RoomId = 2,
+                ResidencyId = 1
+            },
+            new Booking
+            {
+                Id = 3,
+                StartTime = new DateTime(2025, 05, 12, 18, 0, 0),
+                EndTime = new DateTime(2025, 05, 12, 20, 0, 0),
+                RoomId = 1,
+                ResidencyId = 2
+            });
+        
         base.OnModelCreating(modelBuilder);
     }
 
