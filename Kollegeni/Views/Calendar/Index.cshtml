@@ -18,13 +18,58 @@
                 dateClick: function(info) {
                     //Set the selected date in the hidden input
                     document.getElementById('selectedDate').value = info.dateStr;
-
-                    //Open the modal
                     $('#bookingModal').modal('show');
                 }
             });
 
             calendar.render();
+
+            // Form submission (AJAX)
+                    $('#bookingForm').submit(function (event) {
+                event.preventDefault();
+
+                var selectedDate = $('#selectedDate').val();
+                var timeSlot = $('#timeSlot').val();
+                var roomId = $('#room').val();
+                var residencyId = 1; //TODO: set as session user residence ID
+
+                if (!selectedDate || !timeSlot || !roomId) {
+                    alert("Please fill in all the fields");
+                    return;
+                }
+
+                // Send the data to the server using AJAX
+                $.ajax({
+                    url: '/Calendar/Create',
+                    type: 'POST',
+                    data: {
+                        selectedDate: selectedDate,
+                        timeSlot: timeSlot,
+                        roomId: roomId,
+                        residencyId: residencyId
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $('#bookingModal').modal('hide');
+                            alert("Booking created successfully!");
+
+                            //reload?
+                            calendar.refetchEvents();
+                        } else {
+                            alert("Error: " + response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("XHR Status:", xhr.status);
+                        console.error("XHR ResponseText:", xhr.responseText);
+                        console.error("Error Status:", status);
+                        console.error("Error Thrown:", error);
+
+                        var errorMessage = xhr.responseText || error || "An unexpected error occurred.";
+                        alert("Error: " + errorMessage);
+                    }
+                });
+            });
         });
     </script>
 

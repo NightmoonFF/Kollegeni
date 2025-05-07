@@ -65,5 +65,45 @@ namespace Kollegeni.Controllers
 
             return Json(events);
         }
+
+        // POST: Booking/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create([Bind("StartTime,EndTime,RoomId,ResidencyId")] Booking booking, string selectedDate, string timeSlot)
+        {
+            // Validate data
+            if (string.IsNullOrEmpty(selectedDate) || string.IsNullOrEmpty(timeSlot))
+            {
+                return Json(new { success = false, message = "Invalid date or time slot." });
+            }
+
+            try
+            {
+                // Convert selected date and time slot to DateTime
+                DateTime startTime = DateTime.Parse(selectedDate + " " + timeSlot);
+                DateTime endTime = startTime.AddHours(2);
+
+                booking.StartTime = startTime;
+                booking.EndTime = endTime;
+
+                var room = _context.Rooms.FirstOrDefault(r => r.Id == booking.RoomId);
+                var residency = _context.Residencies.FirstOrDefault(r => r.Id == booking.ResidencyId);
+
+                if (room == null || residency == null)
+                {
+                    return Json(new { success = false, message = "Room or Residency not found." });
+                }
+
+                _context.Bookings.Add(booking);
+                _context.SaveChanges();
+                return Json(new { success = true, message = "Booking created successfully!" });
+            }
+            catch(Exception ex) 
+            {
+            
+                return Json(new { success = false, message = "Error: " + ex.Message });
+            }
+
+        }
     }
 }
