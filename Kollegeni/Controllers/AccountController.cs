@@ -19,7 +19,6 @@ namespace Kollegeni.Controllers
             return View();
         }
 
-        //TODO: virker ikke med .net Core, man skal åbenbart bruge noget identity noget - som kræver .net 9.0?
         // POST: Account/Login
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -30,11 +29,10 @@ namespace Kollegeni.Controllers
                 var user = _context.Users.FirstOrDefault(u => u.Username == model.Username && u.Password == model.Password);
                 if (user != null)
                 {
-                    //set up authentication cookies or tokens here?
-                    //FormsAuthentication.SetAuthCookie(user.Username, false);
+
                     HttpContext.Session.SetString("Username", user.Username);
                     
-                    return RedirectToAction("Index", "Calendar"); //Redirect to Home page after login?
+                    return RedirectToAction("Index", "Calendar");
                 }
                 else
                 {

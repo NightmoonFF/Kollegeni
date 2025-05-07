@@ -19,6 +19,11 @@ namespace Kollegeni.Controllers
         // GET: Residency
         public async Task<IActionResult> Index()
         {
+            var user = HttpContext.Session.GetString("Username");
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
 
             var residencies = await _context.Residencies
                 .Include(r => r.UserResidencies)
