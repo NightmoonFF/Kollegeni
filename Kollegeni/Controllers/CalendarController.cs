@@ -138,17 +138,7 @@ namespace Kollegeni.Controllers
 
         public JsonResult GetBookingDetails(int id)
         {
-            var booking = _context.Bookings
-                .Where(b => b.Id == id)
-                .Select(b => new
-                {
-                    id = b.Id,
-                    start = b.StartTime.ToString("yyyy-MM-ddTHH:mm:ss"),
-                    end = b.EndTime.ToString("yyyy-MM-ddTHH:mm:ss"),
-                    roomName = b.Room.Name,
-                    residency = b.Residency.Address
-                })
-                .FirstOrDefault();
+            var booking = GetBookingDetailsImpl(id);
 
             if (booking == null)
             {
@@ -158,5 +148,11 @@ namespace Kollegeni.Controllers
             return Json(new { success = true, data = booking });
         }
 
+        public Booking GetBookingDetailsImpl(int id)
+        {
+            return _context.Bookings
+                .Where(b => b.Id == id)
+                .FirstOrDefault();
+        }
     }
 }
