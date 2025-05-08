@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Kollegeni.Models;
 using Kollegeni.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Kollegeni.Controllers
 {
@@ -72,10 +73,11 @@ namespace Kollegeni.Controllers
 
         // POST: Booking/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult Create([Bind("RoomId")] Booking booking, string selectedDate, string timeSlot)
         {
-            // Retrieve the username from the session
+            ModelState.Remove("Room");
+            ModelState.Remove("Residency");
+
             var username = HttpContext.Session.GetString("Username");
 
             if (string.IsNullOrEmpty(username))
@@ -83,39 +85,45 @@ namespace Kollegeni.Controllers
                 return Json(new { success = false, message = "User not logged in." });
             }
 
-            // Validate data
             if (string.IsNullOrEmpty(selectedDate) || string.IsNullOrEmpty(timeSlot))
             {
                 return Json(new { success = false, message = "Invalid date or time slot." });
             }
 
+            if (!DateTime.TryParse(selectedDate + " " + timeSlot, out DateTime startTime))
+            {
+                return Json(new { success = false, message = "Invalid date or time format." });
+            }
+
             try
             {
-                // Convert selected date and time slot to DateTime
-                DateTime startTime = DateTime.Parse(selectedDate + " " + timeSlot);
                 DateTime endTime = startTime.AddHours(2);
-
                 booking.StartTime = startTime;
                 booking.EndTime = endTime;
 
-                var user = _context.Users.FirstOrDefault(u => u.Username == username);
+                var user = _context.Users
+                    .Include(u => u.UserResidences)
+                    .FirstOrDefault(u => u.Username == username);
 
                 if (user == null)
                 {
                     return Json(new { success = false, message = "User not found." });
                 }
 
-                booking.ResidencyId = user.UserResidences.FirstOrDefault().ResidenceId;
+                var userResidence = user.UserResidences?.FirstOrDefault();
+                if (userResidence == null)
+                {
+                    return Json(new { success = false, message = "User does not have a residence." });
+                }
 
-                // Validate Room
+                booking.ResidencyId = userResidence.ResidenceId;
+
                 var room = _context.Rooms.FirstOrDefault(r => r.Id == booking.RoomId);
-
                 if (room == null)
                 {
                     return Json(new { success = false, message = "Room not found." });
                 }
 
-                // Add the booking to the database
                 _context.Bookings.Add(booking);
                 _context.SaveChanges();
 
@@ -126,7 +134,6 @@ namespace Kollegeni.Controllers
                 return Json(new { success = false, message = "Error: " + ex.Message });
             }
         }
-
 
         public JsonResult GetBookingDetails(int id)
         {
