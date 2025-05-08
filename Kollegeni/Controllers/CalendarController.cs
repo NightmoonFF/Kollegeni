@@ -101,6 +101,17 @@ namespace Kollegeni.Controllers
                 booking.StartTime = startTime;
                 booking.EndTime = endTime;
 
+                // Check for overlapping bookings in the same room
+                var overlappingBooking = _context.Bookings
+                    .FirstOrDefault(b => b.RoomId == booking.RoomId &&
+                                         b.StartTime < endTime &&
+                                         b.EndTime > startTime);
+
+                if (overlappingBooking != null)
+                {
+                    return Json(new { success = false, message = "This room is already booked for the selected timeslot." });
+                }
+
                 var user = _context.Users
                     .Include(u => u.UserResidences)
                     .FirstOrDefault(u => u.Username == username);
@@ -150,14 +161,28 @@ namespace Kollegeni.Controllers
 
             try
             {
+                DateTime endTime = startTime.AddHours(2);
+
                 var booking = _context.Bookings.FirstOrDefault(b => b.Id == id);
                 if (booking == null)
                 {
                     return Json(new { success = false, message = "Booking not found." });
                 }
 
+                // Check for overlapping bookings in the same room, excluding the current booking
+                var overlappingBooking = _context.Bookings
+                    .FirstOrDefault(b => b.RoomId == roomId &&
+                                         b.Id != id &&
+                                         b.StartTime < endTime &&
+                                         b.EndTime > startTime);
+
+                if (overlappingBooking != null)
+                {
+                    return Json(new { success = false, message = "This room is already booked for the selected timeslot." });
+                }
+
                 booking.StartTime = startTime;
-                booking.EndTime = startTime.AddHours(2);
+                booking.EndTime = endTime;
                 booking.RoomId = roomId;
 
                 _context.Bookings.Update(booking);
