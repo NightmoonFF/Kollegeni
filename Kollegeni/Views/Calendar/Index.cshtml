@@ -49,27 +49,15 @@
                 data: { id: info.event.id },
                 success: function(response) {
                     if (response.success) {
-                        // Debugging: Log response to ensure data is correct
                         console.log("Booking Details:", response.data);
 
-                        // Format the start and end times
-                        var formatDate = (isoString) => {
-                            var options = {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                hour12: true
-                            };
-                            return new Intl.DateTimeFormat('en-US', options).format(new Date(isoString));
-                        };
-
-                        var start = formatDate(response.data.start);
-                        var end = formatDate(response.data.end);
-
                         // Populate modal with booking details
-                        $('#bookingModalLabel').text('Booking Details');
-                        $('#timeSlot').html('<option>' + (start + " - " + end || 'N/A') + '</option>').prop('disabled', true);
-                        $('#room').html('<option>' + (response.data.roomName || 'N/A') + '</option>').prop('disabled', true);
-                        $('#residency').html('<option>' + (response.data.residency || 'N/A') + '</option>').prop('disabled', true);
+                        $('#bookingModalLabel').text('Edit Booking');
+                        $('#selectedDate').val(response.data.start); // Set selected date
+                        $('#timeSlot').val(response.data.timeSlot); // Set time slot
+                        $('#room').val(response.data.roomId); // Set room ID
+                        $('#room').prop('disabled', false); // Enable room selection if needed
+                        $('#bookingId').val(info.event.id); // Set booking ID in hidden input
 
                         // Show the modal
                         $('#bookingModal').modal('show');
@@ -82,59 +70,98 @@
                     alert("An error occurred while fetching booking details.");
                 }
             });
-
         }
+
+
+
 
         });
 
             calendar.render();
 
             // Form submission (AJAX)
-                    $('#bookingForm').submit(function (event) {
-                event.preventDefault();
+                    $('#bookingForm').submit(function(event) {
+            event.preventDefault();
 
-                var selectedDate = $('#selectedDate').val();
-                var timeSlot = $('#timeSlot').val();
-                var roomId = parseInt($('#room').val());
+            console.log("Submitting booking form...");
 
-                if (!selectedDate || !timeSlot || !roomId) {
-                    alert("Please fill in all the fields");
-                    return;
+            var bookingId = $('#bookingId').val(); // Get booking ID
+            var selectedDate = $('#selectedDate').val();
+            var timeSlot = $('#timeSlot').val();
+            var roomId = parseInt($('#room').val());
+
+            console.log("Booking ID:", bookingId);
+            console.log("Selected Date:", selectedDate);
+            console.log("Time Slot:", timeSlot);
+            console.log("Room ID:", roomId);
+
+            if (!selectedDate || !timeSlot || isNaN(roomId)) {
+                alert("Please fill in all the fields");
+                return;
+            }
+
+            var url = bookingId ? '/Calendar/Update' : '/Calendar/Create'; // Determine URL
+            var data = {
+                id: bookingId,
+                selectedDate: selectedDate,
+                timeSlot: timeSlot,
+                roomId: roomId
+            };
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: data,
+                success: function(response) {
+                    console.log("Response:", response);
+                    if (response.success) {
+                        $('#bookingModal').modal('hide');
+                        alert(bookingId ? "Booking updated successfully!" : "Booking created successfully!");
+                        calendar.refetchEvents();
+                    } else {
+                        alert("Error: " + response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error:", error);
                 }
-
-                var dataVar = {
-                        selectedDate: selectedDate,
-                        timeSlot: timeSlot,
-                        roomId: roomId
-                    }
-
-                // Send the data to the server using AJAX
-                $.ajax({
-                    url: '/Calendar/Create',
-                    type: 'POST',
-                    data: dataVar,
-                    success: function(response) {
-                        if (response.success) {
-                            $('#bookingModal').modal('hide');
-                            alert("Booking created successfully!");
-
-                            //reload?
-                            calendar.refetchEvents();
-                        } else {
-                            alert("Error: " + response.message);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("XHR Status:", xhr.status);
-                        console.error("XHR ResponseText:", xhr.responseText);
-                        console.error("Error Status:", status);
-                        console.error("Error Thrown:", error);
-
-                        var errorMessage = xhr.responseText || error || "An unexpected error occurred.";
-                        alert("Error: " + errorMessage);
-                    }
-                });
             });
+        });
+
+                $('#deleteBookingButton').click(function () {
+            var bookingId = $('#bookingId').val(); // Get the booking ID from the hidden input
+
+            if (!bookingId) {
+                alert("No booking selected to delete.");
+                return;
+            }
+
+            if (!confirm("Are you sure you want to delete this booking?")) {
+                return;
+            }
+
+            $.ajax({
+                url: '/Calendar/Delete',
+                type: 'POST',
+                data: { id: bookingId },
+                success: function (response) {
+                    if (response.success) {
+                        $('#bookingModal').modal('hide');
+                        alert("Booking deleted successfully!");
+                        calendar.refetchEvents(); // Refresh the calendar
+                    } else {
+                        alert("Error: " + response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error:", error);
+                    alert("An error occurred while deleting the booking.");
+                }
+            });
+        });
+
+
+
         });
     </script>
 
@@ -174,9 +201,15 @@
                                 }
                             </select>
                         </div>
-
+                        
+                        <input type="hidden" id="bookingId">
                         <input type="hidden" id="selectedDate">
-                        <button class="btn btn-primary">Save Booking</button>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" id="deleteBookingButton">Delete Booking</button>
+                            <button type="submit" class="btn btn-primary">Save Booking</button>
+                        </div>
+
                     </form>
                 </div>
             </div>

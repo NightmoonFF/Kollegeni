@@ -135,6 +135,64 @@ namespace Kollegeni.Controllers
             }
         }
 
+        [HttpPost]
+        public ActionResult Update(int id, string selectedDate, string timeSlot, int roomId)
+        {
+            if (string.IsNullOrEmpty(selectedDate) || string.IsNullOrEmpty(timeSlot))
+            {
+                return Json(new { success = false, message = "Invalid date or time slot." });
+            }
+
+            if (!DateTime.TryParse(selectedDate + " " + timeSlot, out DateTime startTime))
+            {
+                return Json(new { success = false, message = "Invalid date or time format." });
+            }
+
+            try
+            {
+                var booking = _context.Bookings.FirstOrDefault(b => b.Id == id);
+                if (booking == null)
+                {
+                    return Json(new { success = false, message = "Booking not found." });
+                }
+
+                booking.StartTime = startTime;
+                booking.EndTime = startTime.AddHours(2);
+                booking.RoomId = roomId;
+
+                _context.Bookings.Update(booking);
+                _context.SaveChanges();
+
+                return Json(new { success = true, message = "Booking updated successfully!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult Delete(int id)
+        {
+            try
+            {
+                var booking = _context.Bookings.FirstOrDefault(b => b.Id == id);
+                if (booking == null)
+                {
+                    return Json(new { success = false, message = "Booking not found." });
+                }
+
+                _context.Bookings.Remove(booking);
+                _context.SaveChanges();
+
+                return Json(new { success = true, message = "Booking deleted successfully!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
+            }
+        }
+
 
         public JsonResult GetBookingDetails(int id)
         {
@@ -143,8 +201,10 @@ namespace Kollegeni.Controllers
                 .Select(b => new
                 {
                     id = b.Id,
-                    start = b.StartTime.ToString("yyyy-MM-ddTHH:mm:ss"),
-                    end = b.EndTime.ToString("yyyy-MM-ddTHH:mm:ss"),
+                    start = b.StartTime.ToString("yyyy-MM-dd"),
+                    timeSlot = b.StartTime.ToString("HH:mm"), // Udled timeSlot fra StartTime
+                    end = b.EndTime.ToString("yyyy-MM-dd"),
+                    roomId = b.RoomId,
                     roomName = b.Room.Name,
                     residency = b.Residency.Address
                 })
@@ -158,5 +218,7 @@ namespace Kollegeni.Controllers
             return Json(new { success = true, data = booking });
         }
 
+
     }
+
 }
