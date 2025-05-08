@@ -131,5 +131,28 @@ namespace Kollegeni.Controllers
             }
         }
 
+
+        public JsonResult GetBookingDetails(int id)
+        {
+            var booking = _context.Bookings
+                .Where(b => b.Id == id)
+                .Select(b => new
+                {
+                    id = b.Id,
+                    start = b.StartTime.ToString("yyyy-MM-ddTHH:mm:ss"),
+                    end = b.EndTime.ToString("yyyy-MM-ddTHH:mm:ss"),
+                    roomName = b.Room.Name,
+                    residency = b.Residency.Address
+                })
+                .FirstOrDefault();
+
+            if (booking == null)
+            {
+                return Json(new { success = false, message = "Booking not found" });
+            }
+
+            return Json(new { success = true, data = booking });
+        }
+
     }
 }
