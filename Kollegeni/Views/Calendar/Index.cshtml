@@ -81,24 +81,24 @@
 
                 var selectedDate = $('#selectedDate').val();
                 var timeSlot = $('#timeSlot').val();
-                var roomId = $('#room').val();
-                var residencyId = 1; //TODO: set as session user residence ID
+                var roomId = parseInt($('#room').val());
 
                 if (!selectedDate || !timeSlot || !roomId) {
                     alert("Please fill in all the fields");
                     return;
                 }
 
+                var dataVar = {
+                        selectedDate: selectedDate,
+                        timeSlot: timeSlot,
+                        roomId: roomId
+                    }
+
                 // Send the data to the server using AJAX
                 $.ajax({
                     url: '/Calendar/Create',
                     type: 'POST',
-                    data: {
-                        selectedDate: selectedDate,
-                        timeSlot: timeSlot,
-                        roomId: roomId,
-                        residencyId: residencyId
-                    },
+                    data: dataVar,
                     success: function(response) {
                         if (response.success) {
                             $('#bookingModal').modal('hide');
@@ -162,7 +162,7 @@
                         </div>
 
                         <input type="hidden" id="selectedDate">
-                        <button type="submit" class="btn btn-primary">Save Booking</button>
+                        <button class="btn btn-primary">Save Booking</button>
                     </form>
                 </div>
             </div>

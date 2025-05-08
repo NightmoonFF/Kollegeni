@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Kollegeni.Models;
 using Kollegeni.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Kollegeni.Controllers
 {
@@ -72,11 +73,11 @@ namespace Kollegeni.Controllers
 
         // POST: Booking/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind("RoomId")] Booking booking, string selectedDate, string timeSlot)
+        public ActionResult Create(int roomId, string selectedDate, string timeSlot)
         {
             // Retrieve the username from the session
             var username = HttpContext.Session.GetString("Username");
+            Booking booking = new Booking();
 
             if (string.IsNullOrEmpty(username))
             {
@@ -91,6 +92,8 @@ namespace Kollegeni.Controllers
 
             try
             {
+                booking.RoomId = roomId;
+
                 // Convert selected date and time slot to DateTime
                 DateTime startTime = DateTime.Parse(selectedDate + " " + timeSlot);
                 DateTime endTime = startTime.AddHours(2);
@@ -98,13 +101,14 @@ namespace Kollegeni.Controllers
                 booking.StartTime = startTime;
                 booking.EndTime = endTime;
 
-                var user = _context.Users.FirstOrDefault(u => u.Username == username);
+                var user = _context.Users.Include(u => u.UserResidences).FirstOrDefault(u => username == u.Username);
 
                 if (user == null)
                 {
                     return Json(new { success = false, message = "User not found." });
                 }
 
+                
                 booking.ResidencyId = user.UserResidences.FirstOrDefault().ResidenceId;
 
                 // Validate Room
