@@ -28,13 +28,6 @@
                     failure: function() {
                         console.error('Failed to fetch events');
                     }
-                },
-                {
-                    url: '/Calendar/GetRooms', // Tredje datakilde
-                    method: 'GET',
-                    failure: function() {
-                    console.error('Failed to fetch rooms');
-                    }
                 }
             ],
 
@@ -45,31 +38,52 @@
                 //Open the modal
                 $('#bookingModal').modal('show');
             },
-            eventClick: function(info) {
-                // Prevent default behavior (e.g., navigating to a URL)
-                info.jsEvent.preventDefault();
+        eventClick: function(info) {
+            // Prevent default behavior
+            info.jsEvent.preventDefault();
 
-                // Log event details for debugging
-                console.log('Event clicked:', info.event);
+            // Fetch booking details via AJAX
+            $.ajax({
+                url: '/Calendar/GetBookingDetails',
+                type: 'GET',
+                data: { id: info.event.id },
+                success: function(response) {
+                    if (response.success) {
+                        // Debugging: Log response to ensure data is correct
+                        console.log("Booking Details:", response.data);
 
-                // Populate modal with event details
-                document.getElementById('bookingModalLabel').innerText = 'Booking Details';
-                document.getElementById('startTime').value = info.event.start.toISOString().slice(0, 16); // Format datetime
-                document.getElementById('endTime').value = info.event.end ? info.event.end.toISOString().slice(0, 16) : '';
-                document.getElementById('room').value = info.event.extendedProps.roomName || '';
-                document.getElementById('residency').value = info.event.extendedProps.residency || '';
+                        // Format the start and end times
+                        var formatDate = (isoString) => {
+                            var options = {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: true
+                            };
+                            return new Intl.DateTimeFormat('en-US', options).format(new Date(isoString));
+                        };
 
-                // Disable form inputs to make it read-only
-                document.getElementById('startTime').disabled = true;
-                document.getElementById('endTime').disabled = true;
-                document.getElementById('room').disabled = true;
-                document.getElementById('residency').disabled = true;
+                        var start = formatDate(response.data.start);
+                        var end = formatDate(response.data.end);
 
-                // Show the modal
-                $('#bookingModal').modal('show');
-                
-            }
+                        // Populate modal with booking details
+                        $('#bookingModalLabel').text('Booking Details');
+                        $('#timeSlot').html('<option>' + (start + " - " + end || 'N/A') + '</option>').prop('disabled', true);
+                        $('#room').html('<option>' + (response.data.roomName || 'N/A') + '</option>').prop('disabled', true);
+                        $('#residency').html('<option>' + (response.data.residency || 'N/A') + '</option>').prop('disabled', true);
 
+                        // Show the modal
+                        $('#bookingModal').modal('show');
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error fetching booking details:", error);
+                    alert("An error occurred while fetching booking details.");
+                }
+            });
+
+        }
 
         });
 
