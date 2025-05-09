@@ -22,10 +22,6 @@ public class BookingDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        //optionsBuilder.UseSqlServer("Server=localhost;Database=Kollegeni;Trusted_Connection=True;TrustServerCertificate=True;");
-
-        //Apple Friendly?
-        //TODO: Skal hedde localhost\\SQLEXPRESS på min stationære, wtf, måske en try-catch for at prøve begge?
         optionsBuilder.UseSqlServer("Data Source=localhost;Initial Catalog=Kollegeni;Trusted_Connection=True;TrustServerCertificate=True;");
     }
 
