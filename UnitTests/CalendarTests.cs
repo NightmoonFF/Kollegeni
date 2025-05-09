@@ -35,7 +35,6 @@ namespace Kollegeni.Tests
         public void TestGetbookings()
         {
 
-            
             Booking b = new Booking();
             DateTime now = DateTime.Now;
             b.StartTime = now;
@@ -67,23 +66,18 @@ namespace Kollegeni.Tests
             _dbContext.Rooms.Add(room);
             _dbContext.SaveChanges();
 
-            // Simulate a logged-in user by setting the session in the HttpContext (simplified)
             _controller.ControllerContext.HttpContext.Session.SetString("Username", "testuser");
 
-            // Arrange: Prepare the booking data
             var booking = new Booking { RoomId = 1 };
-            var selectedDate = "2025-05-10"; // Date in YYYY-MM-DD format
-            var timeSlot = "14:00"; // Time in HH:mm format
+            var selectedDate = "2025-05-10";
+            var timeSlot = "14:00";
 
-            // Act: Call the Create method to create a new booking
             var result = _controller.Create(booking, selectedDate, timeSlot) as JsonResult;
 
-            // Assert: Check if the booking creation was successful
             dynamic response = result.Value;
             Assert.IsTrue(response.success);
             Assert.AreEqual("Booking created successfully!", response.message);
 
-            // Verify that the booking is actually saved in the database
             var createdBooking = _dbContext.Bookings.Find(booking.Id);
             Assert.IsNotNull(createdBooking, "The booking should be saved in the database.");
             Assert.AreEqual(booking.RoomId, createdBooking.RoomId, "The room ID should match.");
