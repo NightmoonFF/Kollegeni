@@ -58,12 +58,15 @@ namespace Kollegeni.Tests
             var user = new User
             {
                 Username = "testuser",
+                Password = "gg",
+                Name = "testie",
+                Email = "walla@gmail.com",
+                Language = "Eng",
+                Avatar = "pojeapogapjegpjog",
                 UserResidences = new List<UserResidence> { new UserResidence { ResidenceId = 1 } }
             };
-            var room = new Room { Id = 1, Name = "Room 1" };
 
             _dbContext.Users.Add(user);
-            _dbContext.Rooms.Add(room);
             _dbContext.SaveChanges();
 
             _controller.ControllerContext.HttpContext.Session.SetString("Username", "testuser");
