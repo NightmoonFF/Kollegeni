@@ -83,7 +83,8 @@ public class BookingDbContext : DbContext
         //Seed Room Data
         modelBuilder.Entity<Room>().HasData(
             new Room { Id = 1, Name = "Bar Room", Description = "The bar room i guess"},
-            new Room { Id = 2, Name = "Pool Room", Description = "Room for playing Pool obviously"}
+            new Room { Id = 2, Name = "Pool Room", Description = "Room for playing Pool obviously"},
+            new Room { Id = 3, Name = "Sauna Room", Description = "Get hot and moist"}
             );
 
         //Seed Booking Data
