@@ -218,8 +218,7 @@ namespace Kollegeni.Controllers
             }
         }
 
-
-        public JsonResult GetBookingDetails(int id)
+        public JsonResult GetBookingDetailsWithDetails(int id)
         {
             var booking = GetBookingDetailsSimple(id);
 
@@ -237,6 +236,32 @@ namespace Kollegeni.Controllers
                 .Where(b => b.Id == id)
                 .FirstOrDefault();
         }
+
+        public JsonResult GetBookingDetails(int id)
+        {
+            var booking = _context.Bookings
+                .Where(b => b.Id == id)
+                .Select(b => new
+                {
+                    id = b.Id,
+                    start = b.StartTime.ToString("yyyy-MM-dd"),
+                    timeSlot = b.StartTime.ToString("HH:mm"), // Udled timeSlot fra StartTime
+                    end = b.EndTime.ToString("yyyy-MM-dd"),
+                    roomId = b.RoomId,
+                    roomName = b.Room.Name,
+                    residency = b.Residency.Address
+                })
+                .FirstOrDefault();
+
+            if (booking == null)
+            {
+                return Json(new { success = false, message = "Booking not found" });
+            }
+
+            return Json(new { success = true, data = booking });
+        }
+
+
     }
 
 }
