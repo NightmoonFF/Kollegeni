@@ -29,47 +29,6 @@ namespace Kollegeni.Controllers
             return View();
         }
 
-        public JsonResult GetBookings()
-        {
-            var events = _context.Bookings
-                .Select(b => new
-                {
-                    id = b.Id,
-
-                    start = b.StartTime.ToString("yyyy-MM-ddTHH:mm:ss"),
-                    end = b.EndTime.ToString("yyyy-MM-ddTHH:mm:ss"),
-                    roomId = b.RoomId,
-                    residencyid = b.ResidencyId,
-                    room = b.Room,
-                    residency = b.Residency,
-                    extendedProps = new
-                    {
-                        roomName = b.Room.Name
-                    }
-
-                })
-                .ToList();
-
-            return Json(events);
-        }
-
-        public JsonResult GetEvents()
-        {
-            var events = _context.Events
-                .Select(e => new
-                {
-                    id = e.Id,
-                    start = e.StartTime.ToString("yyyy-MM-ddTHH:mm:ss"),
-                    end = e.EndTime.ToString("yyyy-MM-ddTHH:mm:ss"),
-                    description = e.Description,
-                    name = e.Name,
-                    tenantId = e.TenantId,
-                    residency = e.Residency
-                })
-                .ToList();
-
-            return Json(events);
-        }
 
         // POST: Booking/Create
         [HttpPost]
@@ -136,9 +95,51 @@ namespace Kollegeni.Controllers
         }
 
 
+        public JsonResult GetEvents()
+        {
+            var events = _context.Events
+                .Select(e => new
+                {
+                    id = e.Id,
+                    start = e.StartTime.ToString("yyyy-MM-ddTHH:mm:ss"),
+                    end = e.EndTime.ToString("yyyy-MM-ddTHH:mm:ss"),
+                    description = e.Description,
+                    name = e.Name,
+                    tenantId = e.TenantId,
+                    residency = e.Residency
+                })
+                .ToList();
+
+            return Json(events);
+        }
+
+        public JsonResult GetBookings()
+        {
+            var events = _context.Bookings
+                .Select(b => new
+                {
+                    id = b.Id,
+
+                    start = b.StartTime.ToString("yyyy-MM-ddTHH:mm:ss"),
+                    end = b.EndTime.ToString("yyyy-MM-ddTHH:mm:ss"),
+                    roomId = b.RoomId,
+                    residencyid = b.ResidencyId,
+                    room = b.Room,
+                    residency = b.Residency,
+                    extendedProps = new
+                    {
+                        roomName = b.Room.Name
+                    }
+
+                })
+                .ToList();
+
+            return Json(events);
+        }
+
         public JsonResult GetBookingDetails(int id)
         {
-            var booking = GetBookingDetailsImpl(id);
+            var booking = GetBookingDetailsSimple(id);
 
             if (booking == null)
             {
@@ -148,11 +149,12 @@ namespace Kollegeni.Controllers
             return Json(new { success = true, data = booking });
         }
 
-        public Booking GetBookingDetailsImpl(int id)
+        public Booking GetBookingDetailsSimple(int id)
         {
             return _context.Bookings
                 .Where(b => b.Id == id)
                 .FirstOrDefault();
         }
+
     }
 }

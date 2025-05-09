@@ -2,6 +2,7 @@
 using Kollegeni.Data;
 using Kollegeni.Models;
 using Kollegeni.Service;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NuGet.Protocol;
@@ -17,14 +18,23 @@ namespace Kollegeni.Tests
 
     class CalendarTests
     {
-        [Test]
-        public void TestGetbookings()
+        private BookingDbContext _dbContext;
+        private CalendarController _controller;
+
+        [SetUp]
+        public void Setup()
         {
             var options = new DbContextOptionsBuilder<BookingDbContext>()
                 .UseSqlServer("Data Source=localhost;Initial Catalog=KollegeniTest;Trusted_Connection=True;TrustServerCertificate=True;") // Use your actual test or dev database connection string
                 .Options;
-            BookingDbContext _dbContext = new BookingDbContext(options);
-            CalendarController _controller = new CalendarController(_dbContext);
+            _dbContext = new BookingDbContext(options);
+            _controller = new CalendarController(_dbContext);
+        }
+
+        [Test]
+        public void TestGetbookings()
+        {
+
             
             Booking b = new Booking();
             DateTime now = DateTime.Now;
@@ -34,19 +44,58 @@ namespace Kollegeni.Tests
             _dbContext.Bookings.Add(b);
             _dbContext.SaveChanges();
 
-            Booking booking = _controller.GetBookingDetailsImpl(1);
-            Assert.AreEqual(1, booking.Id);
-
-
-
-            //var bookings = JsonSerializer.Deserialize<Booking[]>(x);
-
-
-            //Assert.AreEqual(now, result[bookings.Length-1].StartTime);
-            
-           
+            Booking booking = _controller.GetBookingDetailsSimple(b.Id);
+            Assert.IsNotNull(booking, "Returned booking should not be null.");
+            Assert.AreEqual(b.Id, booking.Id, "Booking ID should match.");
+            Assert.AreEqual(b.StartTime, booking.StartTime, "Start time should match.");
+            Assert.AreEqual(b.ResidencyId, booking.ResidencyId, "Residency ID should match.");
+            Assert.AreEqual(b.RoomId, booking.RoomId, "Room ID should match.");
 
         }
+
+        [Test]
+        public void TestCreateBooking()
+        {
+            var user = new User
+            {
+                Username = "testuser",
+                UserResidences = new List<UserResidence> { new UserResidence { ResidenceId = 1 } }
+            };
+            var room = new Room { Id = 1, Name = "Room 1" };
+
+            _dbContext.Users.Add(user);
+            _dbContext.Rooms.Add(room);
+            _dbContext.SaveChanges();
+
+            // Simulate a logged-in user by setting the session in the HttpContext (simplified)
+            _controller.ControllerContext.HttpContext.Session.SetString("Username", "testuser");
+
+            // Arrange: Prepare the booking data
+            var booking = new Booking { RoomId = 1 };
+            var selectedDate = "2025-05-10"; // Date in YYYY-MM-DD format
+            var timeSlot = "14:00"; // Time in HH:mm format
+
+            // Act: Call the Create method to create a new booking
+            var result = _controller.Create(booking, selectedDate, timeSlot) as JsonResult;
+
+            // Assert: Check if the booking creation was successful
+            dynamic response = result.Value;
+            Assert.IsTrue(response.success);
+            Assert.AreEqual("Booking created successfully!", response.message);
+
+            // Verify that the booking is actually saved in the database
+            var createdBooking = _dbContext.Bookings.Find(booking.Id);
+            Assert.IsNotNull(createdBooking, "The booking should be saved in the database.");
+            Assert.AreEqual(booking.RoomId, createdBooking.RoomId, "The room ID should match.");
+        }
+
+        [TearDown]
+        public void Cleanup()
+        {
+            _dbContext.Dispose();
+            _controller.Dispose();
+        }
+
     }
 
 }
