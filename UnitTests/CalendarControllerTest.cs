@@ -5,6 +5,7 @@ using Kollegeni.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using NuGet.Protocol;
 using NUnit.Framework;
 using System;
@@ -25,11 +26,21 @@ namespace Kollegeni.Tests
         public void Setup()
         {
             var options = new DbContextOptionsBuilder<BookingDbContext>()
-                .UseSqlServer("Data Source=localhost;Initial Catalog=KollegeniTest;Trusted_Connection=True;TrustServerCertificate=True;") // Use your actual test or dev database connection string
+                .UseSqlServer("Data Source=localhost;Initial Catalog=KollegeniTest;Trusted_Connection=True;TrustServerCertificate=True;")
                 .Options;
-            _dbContext = new BookingDbContext(options);
+
+            // Mock IConfiguration
+            var configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(new Dictionary<string, string>
+                {
+            { "ConnectionStrings:DefaultConnection", "Data Source=localhost;Initial Catalog=KollegeniTest;Trusted_Connection=True;TrustServerCertificate=True;" }
+                })
+                .Build();
+
+            _dbContext = new BookingDbContext(options, configuration);
             _controller = new CalendarController(_dbContext);
         }
+
 
         [Test]
         public void TestGetbookings()
